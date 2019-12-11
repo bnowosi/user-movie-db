@@ -32,6 +32,20 @@ def addMovie():
 def searchMovie():
     form = searchMovieForm()
 
+@app.route('/delete/<id>', methods=['POST'])
+def delete_movie(id):
+    mongo.db.userMovies.delete_one({'_id': id})
+    return redirect('/')
+
+@app.route('/watched/<id>', methods=['POST'])
+def watched(id):
+    mongo.db.userMovies.update({'id':id},{'$set':{'watched': 'true'}})
+    return redirect ('/')
+@app.route('/unwatch/<id>', methods=['POST'])
+def watched(id):
+    mongo.db.userMovies.update({'id':id},{'$set':{'watched': 'false'}})
+    return redirect ('/')
+
     if form.validate_on_submit():
         result = mongo.db.userMovies.find({'title':{'$regex':form.movieTitle.data}})
         return render_template('userMovies.html', favMovies=result)
